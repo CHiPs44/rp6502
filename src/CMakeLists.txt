@@ -87,6 +87,10 @@ pico_set_program_name(rp6502_vga "RP6502 VGA")
 pico_set_binary_type(rp6502_vga copy_to_ram)
 pico_set_linker_script(rp6502_vga ${CMAKE_CURRENT_LIST_DIR}/memmap_xram.ld)
 
+# # Enable usb output, disable uart output
+# pico_enable_stdio_usb(rp6502_vga 1)
+# pico_enable_stdio_uart(rp6502_vga 0)
+
 target_include_directories(rp6502_vga PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/tinyusb/src
@@ -101,26 +105,26 @@ target_sources(rp6502_vga PRIVATE
     vga/modes/mode4.c
     vga/modes/mode4.S
     vga/sys/led.c
-    vga/sys/pix.c
+    # vga/sys/pix.c
     vga/sys/ria.c
     vga/sys/std.c
     vga/sys/vga.c
     vga/term/color.c
     vga/term/font.c
     vga/term/term.c
-    vga/usb/cdc.c
-    vga/usb/descriptors.c
-    vga/usb/serno.c
+    # vga/usb/cdc.c
+    # vga/usb/descriptors.c
+    # vga/usb/serno.c
 )
 
 target_link_libraries(rp6502_vga PRIVATE
     pico_stdlib
     pico_multicore
-    pico_unique_id
+    # pico_unique_id
     pico_scanvideo_dpi
     hardware_interp
-    tinyusb_board
-    tinyusb_device
+    # tinyusb_board
+    # tinyusb_device
 )
 
 pico_generate_pio_header(rp6502_vga
@@ -132,15 +136,17 @@ pico_generate_pio_header(rp6502_vga
 )
 
 target_compile_definitions(rp6502_vga PRIVATE
+    # KO PICO_BOARD=vgaboard
+    # <command-line>: warning: "PICO_BOARD" redefined
     PICO_SCANVIDEO_PLANE_COUNT=3
     PICO_SCANVIDEO_MAX_SCANLINE_BUFFER_WORDS=323
     PICO_SCANVIDEO_SCANLINE_BUFFER_COUNT=10
-    PICO_SCANVIDEO_COLOR_PIN_BASE=6
-    PICO_SCANVIDEO_SYNC_PIN_BASE=26
+    # Use "standard" VGA board pins
+    # PICO_SCANVIDEO_COLOR_PIN_BASE=6
+    # PICO_SCANVIDEO_SYNC_PIN_BASE=26
     PICO_RP2040_USB_DEVICE_ENUMERATION_FIX=1
     PICO_RP2040_USB_DEVICE_UFRAME_FIX=1
 )
-
 
 # Project defines available to both Pi Picos.
 # Please change name for hardware forks.
@@ -148,7 +154,7 @@ target_compile_definitions(rp6502_vga PRIVATE
 
 set_property(TARGET rp6502_ria rp6502_vga
     APPEND PROPERTY COMPILE_DEFINITIONS
-    RP6502_NAME="Picocomputer 6502"
+    RP6502_NAME="Picocomputer without 6502"
     RP6502_VERSION=""
     RP6502_CODE_PAGE=850
     RP6502_KEYBOARD=EN_US

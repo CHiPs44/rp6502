@@ -4,22 +4,26 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <stdio.h>
+
 #include "main.h"
 #include "modes/mode1.h"
 #include "modes/mode2.h"
 #include "modes/mode3.h"
 #include "modes/mode4.h"
 #include "sys/led.h"
-#include "sys/pix.h"
+// #include "sys/pix.h"
 #include "sys/ria.h"
 #include "sys/std.h"
 #include "sys/vga.h"
 #include "term/font.h"
 #include "term/term.h"
-#include "usb/cdc.h"
-#include "usb/serno.h"
+// #include "usb/cdc.h"
+// #include "usb/serno.h"
 #include "pico/stdlib.h"
-#include "tusb.h"
+// #include "tusb.h"
+
+#include "term/ansi.h"
 
 static void init(void)
 {
@@ -27,22 +31,23 @@ static void init(void)
     vga_init();
     font_init();
     term_init();
-    serno_init(); // before tusb
-    tusb_init();
+    // serno_init(); // before tusb
+    // tusb_init();
     led_init();
     ria_init();
-    pix_init();
+    // pix_init();
 }
 
 static void task(void)
 {
     vga_task();
     term_task();
-    tud_task();
-    cdc_task();
-    pix_task();
+    // tud_task();
+    // cdc_task();
+    // pix_task();
     ria_task();
     std_task();
+    led_task();
 }
 
 void main_flush(void)
@@ -77,7 +82,20 @@ bool main_prog(uint16_t *xregs)
 
 void main()
 {
+    // stdio_init_all();
+    // sleep_ms(2000);
+    // printf("*** main ***\n");
+    // sleep_ms(2000);
     init();
+    uint counter = 0;
     while (1)
+    {
         task();
+        counter += 1;
+        if (counter % 100000 == 0)
+        {
+            printf(ANSI_BG_GREEN ANSI_FG_YELLOW "Coucou !"
+                                                "\n");
+        }
+    }
 }
